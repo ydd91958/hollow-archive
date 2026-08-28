@@ -1,0 +1,441 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+ * 三层各有各的视觉语言，所以主题不能挂在 body 上。
+ * 每一层的外壳组件通过 useLayerTheme() 往 <html> 写 data-layer，
+ * 下面按 data-layer 分别给 body 上色。默认（无 data-layer）是浅色，
+ * 因为玩家第一眼看到的必须是一个普通招聘网站。
+ */
+
+@layer base {
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+
+  body {
+    @apply bg-zy-bg text-zy-text antialiased;
+    font-family: theme('fontFamily.sans');
+    text-rendering: optimizeLegibility;
+  }
+
+  /* ── 第三层：空册 ───────────────────────────────── */
+  :root[data-layer='archive'] {
+    color-scheme: dark;
+  }
+
+  :root[data-layer='archive'] body {
+    @apply bg-void font-mono text-ink;
+    background-image:
+      radial-gradient(ellipse at 50% -10%, rgba(92, 144, 138, 0.07), transparent 60%),
+      radial-gradient(ellipse at 50% 120%, rgba(0, 0, 0, 0.8), transparent 55%);
+  }
+
+  :root[data-layer='archive'] ::selection {
+    background: #c9a227;
+    color: #07090a;
+  }
+
+  :root[data-layer='archive'] ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  :root[data-layer='archive'] ::-webkit-scrollbar-track {
+    background: #0a0e10;
+  }
+  :root[data-layer='archive'] ::-webkit-scrollbar-thumb {
+    background: #1f292e;
+    border: 2px solid #0a0e10;
+  }
+  :root[data-layer='archive'] ::-webkit-scrollbar-thumb:hover {
+    background: #2f3d43;
+  }
+
+  /* ── 第二层 · 旧工程资料库（2003 年前后的事业单位站点） ── */
+  :root[data-layer='legacy'] body {
+    @apply bg-white font-song text-black;
+    font-size: 13px;
+  }
+
+  /* ── 第二层 · 地方论坛 ─────────────────────────── */
+  :root[data-layer='bbs'] body {
+    @apply bg-bbs-bg text-zy-text;
+    font-family: theme('fontFamily.sans');
+  }
+
+  /* ── 第二层 · 个人博客 ─────────────────────────── */
+  :root[data-layer='blog'] body {
+    @apply bg-blog-bg text-blog-ink;
+    font-family: theme('fontFamily.blog');
+  }
+}
+
+@layer components {
+  /* ═══════════════════════════════════════════════════
+     第三层：空册。以下类只在 data-layer="archive" 下使用。
+     ═══════════════════════════════════════════════════ */
+
+  .panel {
+    @apply border border-line bg-panel;
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.012);
+  }
+
+  .panel-head {
+    @apply flex items-center justify-between gap-3 border-b border-line bg-panel2 px-3 py-1.5
+           text-[10px] uppercase tracking-wider2 text-dim;
+  }
+
+  .hairline {
+    @apply border-t border-line;
+  }
+
+  .field-label {
+    @apply text-[10px] uppercase tracking-wider2 text-faint;
+  }
+  .field-value {
+    @apply text-[13px] text-ink;
+  }
+
+  .tbtn {
+    @apply border border-line bg-panel2 px-3 py-1.5 text-[11px] uppercase tracking-wider2
+           text-dim transition-colors hover:border-line2 hover:text-ink
+           focus:outline-none focus-visible:border-amber focus-visible:text-amber;
+  }
+  .tbtn-active {
+    @apply border-amberdim text-amber;
+  }
+
+  .tinput {
+    @apply w-full border border-line bg-[#080b0d] px-3 py-2 text-[13px] text-ink
+           placeholder:text-faint focus:border-amberdim focus:outline-none;
+  }
+
+  .redacted {
+    @apply relative inline-block cursor-not-allowed select-none bg-[#12181b] align-middle;
+    color: transparent;
+    background-image: repeating-linear-gradient(90deg, #0f1417 0 6px, #141b1f 6px 12px);
+    box-shadow: inset 0 0 0 1px #1e262b;
+  }
+  .redacted-open {
+    @apply cursor-text select-text bg-transparent text-amber;
+    background-image: none;
+    box-shadow: inset 0 -1px 0 0 #7d6718;
+  }
+
+  .damaged {
+    @apply text-faint;
+    text-shadow: 0 0 6px rgba(198, 207, 206, 0.12);
+  }
+
+  .invisible-ink {
+    color: transparent;
+    user-select: text;
+  }
+  .invisible-ink::selection {
+    background: #c9a227;
+    color: #07090a;
+  }
+
+  .crt-lines {
+    background-image: repeating-linear-gradient(
+      0deg,
+      rgba(0, 0, 0, 0.22) 0px,
+      rgba(0, 0, 0, 0.22) 1px,
+      transparent 1px,
+      transparent 3px
+    );
+  }
+
+  .crt-vignette {
+    background: radial-gradient(ellipse at center, transparent 55%, rgba(0, 0, 0, 0.55) 100%);
+  }
+
+  .doc-body {
+    @apply font-doc text-[14px] leading-[1.95] text-ink/90;
+  }
+
+  /* ═══════════════════════════════════════════════════
+     第一层：职引。普通中文互联网产品，不留任何 ARG 痕迹。
+     ═══════════════════════════════════════════════════ */
+
+  /* ═══════════════════════════════════════════════════
+     表面分层。页面不能所有区域都是「白底 + 1px 边框 + 圆角」——
+     那正是 SaaS 模板感的来源。这里给三种不同权重的表面：
+       zy-card    浮起（投影，无边框）      用于内容卡
+       zy-flat    嵌入（浅底，无投影无边框） 用于辅助区
+       zy-sec     区块容器（投影 + 分隔线）
+     ═══════════════════════════════════════════════════ */
+  .zy-card {
+    @apply rounded-lg bg-white shadow-card ring-1 ring-[#101828]/[0.045];
+  }
+
+  .zy-flat {
+    @apply rounded-lg bg-[#f7f9fc];
+  }
+
+  .zy-hover {
+    @apply transition-all duration-200 ease-soft hover:-translate-y-px hover:shadow-cardh
+           hover:ring-brand-300/60;
+  }
+
+  .zy-sec {
+    @apply overflow-hidden rounded-lg bg-white shadow-card ring-1 ring-[#101828]/[0.045];
+  }
+
+  .zy-sec-hd {
+    @apply flex items-center justify-between gap-3 border-b border-zy-line2 px-4 py-3;
+  }
+
+  .zy-sec-title {
+    @apply flex items-center gap-2 text-[15.5px] font-semibold tracking-tight text-zy-text
+           before:block before:h-[15px] before:w-[3px] before:rounded-full
+           before:bg-gradient-to-b before:from-brand-500 before:to-brand-700 before:content-[''];
+  }
+
+  .zy-more {
+    @apply text-xs text-zy-faint transition-colors hover:text-zy-primary;
+  }
+
+  .zy-btn {
+    @apply inline-flex items-center justify-center rounded-md bg-brand-600 px-4 py-2 text-sm
+           text-white shadow-[0_1px_2px_rgba(16,24,40,.08)]
+           transition-all duration-150 ease-soft hover:bg-brand-700 hover:shadow-[0_4px_12px_rgba(26,111,219,.28)]
+           focus:outline-none focus-visible:ring-4 focus-visible:ring-brand-500/25;
+  }
+
+  .zy-btn-ghost {
+    @apply inline-flex items-center justify-center rounded-[3px] border border-zy-line bg-white
+           px-4 py-2 text-sm text-zy-sub transition-colors
+           hover:border-zy-primary hover:text-zy-primary;
+  }
+
+  .zy-input {
+    @apply w-full rounded-md border border-zy-line bg-white px-3 py-2 text-sm text-zy-text
+           transition-shadow duration-150 placeholder:text-zy-faint
+           focus:border-brand-500 focus:outline-none focus:ring-4 focus:ring-brand-500/10;
+  }
+
+  /* 标签：默认灰，另有三种功能色，用于福利/急招/应届等，不用来暗示任何东西。 */
+  .zy-tag {
+    @apply inline-block rounded bg-[#f2f4f8] px-1.5 py-px text-[11px] leading-[18px] text-zy-sub;
+  }
+  .zy-tag-blue {
+    @apply inline-block rounded-[2px] bg-[#eef4fd] px-1.5 py-px text-[11px] leading-[18px] text-[#1a6fdb];
+  }
+  .zy-tag-orange {
+    @apply inline-block rounded-[2px] bg-[#fdf0e9] px-1.5 py-px text-[11px] leading-[18px] text-[#d2622c];
+  }
+  .zy-tag-green {
+    @apply inline-block rounded-[2px] bg-[#ecf7f1] px-1.5 py-px text-[11px] leading-[18px] text-[#2f8f6b];
+  }
+
+  .zy-link {
+    @apply text-zy-primary transition-colors hover:text-zy-primaryDark hover:underline;
+  }
+
+  .zy-salary {
+    @apply font-medium tabular-nums text-zy-salary;
+  }
+
+  /* ── 首屏彩色带 ───────────────────────────────────
+     真实招聘门户的首屏不是白的。搜索区与运营位坐在一整片渐变上，
+     白色内容区从这条带子下面才开始。 */
+  .zy-band {
+    position: relative;
+    background:
+      radial-gradient(760px 300px at 12% -6%, rgba(26, 111, 219, 0.16), transparent 60%),
+      radial-gradient(680px 280px at 88% 4%, rgba(239, 104, 32, 0.07), transparent 58%),
+      radial-gradient(900px 420px at 50% 110%, rgba(255, 255, 255, 0.9), transparent 62%),
+      linear-gradient(180deg, #e6eefa 0%, #ecf1f8 52%, #f1f3f7 100%);
+  }
+
+  /* 全站极轻颗粒。没有它，大面积渐变会显得是「CSS 拼的」。 */
+  .zy-noise::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.035;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  /* ── 药丸式热词（截图里 BOSS 那排白底药丸） ───────── */
+  .zy-chip {
+    @apply inline-flex items-center rounded-full border border-transparent bg-white/90 px-3 py-1
+           text-[12.5px] text-zy-sub shadow-[0_1px_2px_rgba(16,24,40,.06)]
+           transition-all duration-150 ease-soft
+           hover:-translate-y-px hover:border-brand-200 hover:text-brand-600 hover:shadow-[0_3px_8px_rgba(26,111,219,.14)];
+  }
+
+  /* ── 字号阶梯。有阶梯，层级才立得住。 ─────────────── */
+  .zy-h2 {
+    @apply text-center text-[24px] font-semibold tracking-tight text-zy-text;
+  }
+  .zy-h2-sub {
+    @apply mt-1.5 text-center text-[13px] text-zy-faint;
+  }
+  .t-title {
+    @apply text-[15px] font-medium leading-snug text-zy-text;
+  }
+  .t-body {
+    @apply text-[13.5px] leading-relaxed text-zy-sub;
+  }
+  .t-meta {
+    @apply text-[12px] text-zy-faint;
+  }
+  .t-micro {
+    @apply text-[11px] text-zy-faint;
+  }
+
+  /* ── 横向 tab 行 ─────────────────────────────────── */
+  .zy-tab {
+    @apply relative whitespace-nowrap pb-2 text-[14px] text-zy-sub transition-colors hover:text-zy-text;
+  }
+  .zy-tab-on {
+    @apply font-medium text-zy-primary
+           after:absolute after:inset-x-0 after:bottom-0 after:h-[2px] after:bg-zy-primary after:content-[''];
+  }
+
+  /* ── 运营位：hover 抬起并加深投影，插画同时轻微位移 ── */
+  .zy-promo {
+    @apply relative block overflow-hidden rounded-xl shadow-promo
+           transition-all duration-300 ease-soft hover:-translate-y-0.5 hover:shadow-promoh;
+  }
+  .zy-promo-art {
+    @apply transition-transform duration-500 ease-soft;
+  }
+  .zy-promo:hover .zy-promo-art {
+    transform: translateY(-4px) scale(1.02);
+  }
+
+  /* ── 职位行：hover 时左侧长出一道品牌色 ───────────── */
+  .zy-row {
+    @apply relative transition-colors duration-150
+           before:absolute before:inset-y-0 before:left-0 before:w-0 before:bg-brand-600
+           before:transition-all before:duration-150 before:content-['']
+           hover:bg-brand-50/60 hover:before:w-[3px];
+  }
+
+  /* ── 广告位角标 ─────────────────────────────────── */
+  .zy-ad-mark {
+    @apply absolute bottom-1 right-1.5 rounded-[2px] bg-black/15 px-1 text-[9px] leading-[14px] text-white/70;
+  }
+
+  /* ═══════════════════════════════════════════════════
+     关键词高亮。
+     对外它就是招聘平台的「匹配关键词加粗」——真实网站都有这个功能，
+     所以它不会显得是游戏在指路。对内它是主线信息的可发现性分级：
+       L1 也许值得注意 · L2 主线相关 · L3 关键连接点（可点）
+     一律不用红色、不用图标、不加任何「线索」字样。
+     ═══════════════════════════════════════════════════ */
+  .zy-kw {
+    @apply font-medium text-zy-text;
+  }
+
+  .zy-kw2 {
+    @apply font-semibold text-[#101a2b];
+  }
+
+  /* 需要更强一点时，套一层像检索命中一样的浅底 */
+  .zy-kw2-hit {
+    @apply rounded-[2px] bg-[#f2f6fc] px-[3px] font-semibold text-[#101a2b];
+  }
+
+  .zy-kw3 {
+    @apply font-semibold text-[#12447f] underline decoration-[#bcd3ea] decoration-1 underline-offset-[3px]
+           transition-colors hover:text-zy-primary hover:decoration-zy-primary;
+  }
+
+  /* 字段值本身就是异常点时（未提交 / 未著录 / 资料不完整） */
+  .zy-kw-field {
+    @apply rounded-[2px] bg-[#f6f7f9] px-1.5 py-px font-medium text-[#5b6472];
+  }
+
+  /* 排行序号：前三名实心，其余描边。 */
+  .zy-rank {
+    @apply flex h-[16px] w-[16px] shrink-0 items-center justify-center rounded-[2px]
+           bg-zy-tag text-[10px] font-medium tabular-nums text-zy-faint;
+  }
+  .zy-rank-top {
+    @apply bg-zy-salary text-white;
+  }
+
+  /* ═══════════════════════════════════════════════════
+     第二层 · 地方论坛
+     ═══════════════════════════════════════════════════ */
+
+  .bbs-panel {
+    @apply border border-bbs-line bg-white;
+  }
+
+  .bbs-head {
+    @apply border-b border-bbs-line bg-bbs-head px-3 py-1.5 text-[13px] text-white;
+  }
+
+  .bbs-link {
+    @apply text-bbs-link hover:underline;
+  }
+
+  /* ═══════════════════════════════════════════════════
+     第二层 · 旧工程资料库（表格布局、细边框、小字号）
+     ═══════════════════════════════════════════════════ */
+
+  .lg-link {
+    color: #0000cc;
+    text-decoration: underline;
+  }
+  .lg-link:visited {
+    color: #551a8b;
+  }
+  .lg-link:hover {
+    color: #cc0000;
+  }
+
+  .lg-table {
+    @apply w-full border-collapse;
+  }
+  .lg-table th,
+  .lg-table td {
+    @apply border border-[#999999] px-1.5 py-1 align-top;
+  }
+  .lg-table th {
+    @apply bg-[#dfe6ef] text-left font-normal;
+  }
+
+  .lg-bar {
+    @apply border border-[#8a9bb0] bg-[#c8d6e5] px-2 py-1 text-[13px] font-bold;
+  }
+
+  /* ═══════════════════════════════════════════════════
+     第二层 · 个人博客
+     ═══════════════════════════════════════════════════ */
+
+  .blog-prose {
+    @apply text-[15px] leading-[2.05] text-blog-ink;
+  }
+  .blog-prose p {
+    @apply mb-5;
+  }
+}
+
+@layer utilities {
+  .text-shadow-glow {
+    text-shadow: 0 0 8px currentColor;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}

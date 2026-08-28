@@ -1,0 +1,115 @@
+import type { Block } from '@/layers/archive/types/archive'
+import { InlineText } from '@/layers/archive/components/ui/InlineText'
+import { cn } from '@/shared/lib/cn'
+
+const SYSTEM_TONE = {
+  info: 'border-cyanic/40 text-cyanic',
+  warn: 'border-amberdim text-amber',
+  error: 'border-rust/60 text-rust',
+} as const
+
+/**
+ * 正文区块渲染器。
+ * 新增区块类型时：在 types/archive.ts 的 Block 联合里加一项，然后在这里加一个 case。
+ * TypeScript 会替你找出所有漏掉的地方。
+ */
+export function ArchiveBody({ blocks, inkToken }: { blocks: Block[]; inkToken?: string }) {
+  return (
+    <div className="space-y-4">
+      {blocks.map((b, i) => {
+        switch (b.kind) {
+          case 'heading':
+            return (
+              <h3
+                key={i}
+                className="pt-2 text-[12px] uppercase tracking-wider2 text-dim before:mr-2 before:text-faint before:content-['//']"
+              >
+                {b.text}
+              </h3>
+            )
+
+          case 'text':
+            return (
+              <p key={i} className="doc-body">
+                <InlineText text={b.text} inkToken={inkToken} />
+              </p>
+            )
+
+          case 'field':
+            return (
+              <div key={i} className="grid grid-cols-[6.5rem_1fr] items-baseline gap-3">
+                <div className="field-label">{b.label}</div>
+                <div className="text-[13px]">
+                  <InlineText text={b.value} inkToken={inkToken} />
+                </div>
+              </div>
+            )
+
+          case 'list':
+            return (
+              <ul key={i} className="space-y-1.5 pl-1">
+                {b.items.map((it, n) => (
+                  <li key={n} className="doc-body flex gap-3">
+                    <span className="shrink-0 select-none font-mono text-[11px] text-faint">
+                      {b.ordered ? `${n + 1}.` : '—'}
+                    </span>
+                    <span>
+                      <InlineText text={it} inkToken={inkToken} />
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            )
+
+          case 'quote':
+            return (
+              <div key={i} className="grid grid-cols-[5.5rem_2.5rem_1fr] gap-2 text-[13px]">
+                <span className="select-none font-mono text-[11px] text-faint">{b.time}</span>
+                <span className="font-mono text-[11px] text-cyanic">{b.speaker}</span>
+                <span className="font-doc leading-relaxed text-ink/90">
+                  <InlineText text={b.text} inkToken={inkToken} />
+                </span>
+              </div>
+            )
+
+          case 'damaged':
+            return (
+              <p key={i} className="damaged select-none py-1 text-center text-[12px] tracking-wider">
+                {b.text}
+              </p>
+            )
+
+          case 'margin':
+            return (
+              <aside
+                key={i}
+                className="border-l-2 border-line2 bg-panel2/60 px-3 py-2 font-doc text-[12.5px] italic leading-relaxed text-dim"
+              >
+                <div className="mb-1 font-mono text-[9px] uppercase not-italic tracking-wider2 text-faint">
+                  卷内批注 {b.hand ? `· ${b.hand}` : ''}
+                </div>
+                <InlineText text={b.text} inkToken={inkToken} />
+              </aside>
+            )
+
+          case 'system':
+            return (
+              <div
+                key={i}
+                className={cn(
+                  'border border-dashed px-3 py-2 text-[11.5px] leading-relaxed',
+                  SYSTEM_TONE[b.tone ?? 'info'],
+                )}
+              >
+                <span className="mr-2 opacity-60">[系统]</span>
+                <InlineText text={b.text} inkToken={inkToken} />
+              </div>
+            )
+
+          case 'divider':
+            return <hr key={i} className="border-line" />
+        }
+      })}
+    </div>
+  )
+}
