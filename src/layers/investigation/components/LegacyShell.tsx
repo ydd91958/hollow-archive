@@ -2,6 +2,7 @@ import { Link, Outlet } from 'react-router-dom'
 import { useLayerTheme } from '@/shared/lib/useLayerTheme'
 import { LG, DOMAINS } from '@/shared/routes'
 import { SITE_META } from '../data/projects'
+import { renderEcho } from '@/shared/lib/echoText'
 
 /**
  * 二〇〇三年前后的事业单位站点：表格布局、细边框、宋体小字、访问计数器。
@@ -65,7 +66,7 @@ export function LegacyShell() {
             </span>
           ))}
         </div>
-        <div>{SITE_META.notice}</div>
+        <div>{renderEcho(SITE_META.notice)}</div>
         <div className="mt-2">
           版权所有 © 2003-2009 {SITE_META.org} · 本站最佳浏览分辨率 1024×768
         </div>

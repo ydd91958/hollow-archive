@@ -2,12 +2,13 @@ import { useMemo, useState, type FormEvent } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { Section } from '../components/home/Section'
 import { JobTile } from '../components/home/JobTile'
+import { JobCard } from '../components/JobCard'
 import { DenseRow, RankRow } from '../components/home/JobRow'
 import { CompanyCard, CompanyRow } from '../components/home/CompanyCard'
 import { CampusBanner, StripAd, SubPromos } from '../components/home/PromoBanner'
 import { TrendChart } from '../components/home/Charts'
 import { COMPANIES } from '../data/companies'
-import { HOMEPAGE_CITIES, homepageJobs, salaryFloor, visibleJobs } from '../data/jobs'
+import { freshnessDays, homepageJobs, salaryFloor, visibleJobs } from '../data/jobs'
 import { getSpecial } from '../data/specials'
 import { ARTICLES } from '../data/articles'
 import {
@@ -33,8 +34,16 @@ export function Home() {
   const [hotTab, setHotTab] = useState(HOT_TABS[0])
   const signals = useActiveSignals()
 
-  /* 首页只推一线与新一线城市的职位，和真实门户的运营逻辑一致。 */
-  const pool = homepageJobs(signals)
+  /*
+   * 首页职位池按发布新鲜度排序——真实门户的「最新」就是这么排的。
+   * 副作用正好是我们要的：华北水测的水文岗、测绘岗（3 天前）会正常
+   * 浮到玩家眼前，让这家公司在剧情之前就先以普通公司的身份存在过；
+   * 而「已连续发布 419 天」的核心岗自动沉到最底，不需要靠城市过滤藏它。
+   */
+  const pool = useMemo(
+    () => [...homepageJobs(signals)].sort((a, b) => freshnessDays(a) - freshnessDays(b)),
+    [signals],
+  )
   const all = visibleJobs(signals)
   const special = getSpecial('campus2026')
 
@@ -51,7 +60,9 @@ export function Home() {
   const personalised = all.filter((j) => j.requiresSignal)
 
   const jobCount = (companyId: string) => all.filter((j) => j.companyId === companyId).length
-  const companyPool = COMPANIES.filter((c) => HOMEPAGE_CITIES.includes(c.city))
+  /* 不再按城市过滤企业：一个 22 家企业的平台，
+     首页系统性排除某个城市本身就不自然。 */
+  const companyPool = COMPANIES
   const featured = companyPool.filter((c) => c.verified).slice(0, 12)
   const sideCompanies = [...companyPool].sort((a, b) => jobCount(b.id) - jobCount(a.id)).slice(0, 7)
 
@@ -259,14 +270,20 @@ export function Home() {
               <Section
                 title="你可能感兴趣的职位"
                 tabs={['根据你的浏览记录']}
-                bodyClassName="grid gap-2.5 p-3.5 sm:grid-cols-2 lg:grid-cols-3"
+                bodyClassName="p-3.5"
               >
-                {personalised.map((j) => (
-                  <JobTile key={j.id} job={j} />
-                ))}
-                {pool.slice(0, 5).map((j) => (
-                  <JobTile key={j.id} job={j} />
-                ))}
+                {/* 单独成行。之前它和另外五格挤在网格里，
+                    玩家触发了也看不见——那是被浪费掉的回报。 */}
+                <div className="space-y-2.5">
+                  {personalised.map((j) => (
+                    <JobCard key={j.id} job={j} />
+                  ))}
+                </div>
+                <div className="mt-2.5 grid gap-2.5 sm:grid-cols-3">
+                  {pool.slice(0, 3).map((j) => (
+                    <JobTile key={j.id} job={j} />
+                  ))}
+                </div>
               </Section>
             )}
 

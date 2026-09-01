@@ -86,6 +86,24 @@ export default {
           alt: '#f7f9fb',
         },
 
+        /* ── 第二层：北岭气象公共服务平台（政务站） ── */
+        wx: {
+          bg: '#eef2f6',
+          head: '#1a5b9e',
+          headDark: '#12457a',
+          line: '#d3dde6',
+          line2: '#e6ecf2',
+          text: '#1b2733',
+          sub: '#556575',
+          faint: '#8a97a5',
+          panel: '#f6f9fc',
+          /* 预警信号四色，国标顺序 */
+          blue: '#2f6fd0',
+          yellow: '#e8b21f',
+          orange: '#e07b1a',
+          red: '#c8321f',
+        },
+
         /* ── 第二层：个人博客 ───────────────────── */
         blog: {
           bg: '#faf8f4',

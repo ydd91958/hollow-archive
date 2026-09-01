@@ -60,6 +60,19 @@ export type Block =
   | { kind: 'margin'; text: string; hand?: string }
   /** 系统自己插进正文的东西。 */
   | { kind: 'system'; text: string; tone?: 'info' | 'warn' | 'error' }
+  /**
+   * 每次读都不太一样的一段。
+   *
+   * 缄默级卷宗的正文本身具备传染性，所以它不肯保持同一个形状。
+   * variants 里几句话说的是同一件事，只是措辞和语序不同——
+   * 玩家第二次读会觉得哪里不对，但说不出哪里。
+   */
+  | { kind: 'unstable'; variants: string[] }
+  /**
+   * 待提交的登记表。
+   * 只有 RS-87-0175 用它。玩家在这里按下的那个按钮就是结局。
+   */
+  | { kind: 'registration' }
   | { kind: 'divider' }
 
 export interface Archive {

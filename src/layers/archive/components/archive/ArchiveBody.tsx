@@ -1,5 +1,7 @@
 import type { Block } from '@/layers/archive/types/archive'
+import { useSession } from '@/layers/archive/state/useSession'
 import { InlineText } from '@/layers/archive/components/ui/InlineText'
+import { Registration } from './Registration'
 import { cn } from '@/shared/lib/cn'
 
 const SYSTEM_TONE = {
@@ -13,7 +15,18 @@ const SYSTEM_TONE = {
  * 新增区块类型时：在 types/archive.ts 的 Block 联合里加一项，然后在这里加一个 case。
  * TypeScript 会替你找出所有漏掉的地方。
  */
-export function ArchiveBody({ blocks, inkToken }: { blocks: Block[]; inkToken?: string }) {
+export function ArchiveBody({
+  blocks,
+  inkToken,
+  archiveId,
+}: {
+  blocks: Block[]
+  inkToken?: string
+  /** 缄默级正文靠它取本卷宗的浏览次数，决定这次显示哪个变体。 */
+  archiveId?: string
+}) {
+  const views = useSession((s) => (archiveId ? (s.views[archiveId] ?? 0) : 0))
+
   return (
     <div className="space-y-4">
       {blocks.map((b, i) => {
@@ -105,6 +118,21 @@ export function ArchiveBody({ blocks, inkToken }: { blocks: Block[]; inkToken?: 
                 <InlineText text={b.text} inkToken={inkToken} />
               </div>
             )
+
+          case 'unstable': {
+            /* 缄默级正文不肯保持同一个形状。
+               几句话说的是同一件事，只是语序和措辞不同。
+               页面不承认自己变过，也没有任何提示。 */
+            const v = b.variants[Math.max(0, views - 1) % b.variants.length]
+            return (
+              <p key={i} className="doc-body">
+                <InlineText text={v} inkToken={inkToken} />
+              </p>
+            )
+          }
+
+          case 'registration':
+            return <Registration key={i} />
 
           case 'divider':
             return <hr key={i} className="border-line" />

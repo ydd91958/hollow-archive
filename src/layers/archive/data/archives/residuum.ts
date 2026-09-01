@@ -32,6 +32,14 @@ export const residuum: Archive[] = [
       },
       { kind: 'divider' },
       { kind: 'field', label: '首次确认', value: '{{redact:CLUE_001|1987-11-03}}' },
+      {
+        kind: 'unstable',
+        variants: [
+          '第二层人声的响度低于第一层约十四分贝，与井壁反射的衰减量相符。内容与数小时后同一井口实际发生的对话一致。逐字比对未发现出入。',
+          '第二层人声与数小时后同一井口实际发生的对话内容一致，逐字比对未发现出入。其响度低于第一层约十四分贝，与井壁反射的衰减量相符。',
+          '逐字比对未发现出入：第二层人声的内容，与数小时后在同一井口实际发生的对话一致。响度较第一层低约十四分贝，符合井壁反射的衰减量。',
+        ],
+      },
       { kind: 'field', label: '确认人', value: '登记员 {{ref:PN-79-0091}}' },
       { kind: 'field', label: '复核', value: '████ ████' },
       { kind: 'divider' },
@@ -123,6 +131,8 @@ export const residuum: Archive[] = [
         text: '下一条编号已经生成。它还没有内容。{{hidden:如果你现在去检索 RS-87-0176，你会看到它正在被写。}}',
       },
       { kind: 'damaged', text: '本页余下内容将于读取结束后写入。' },
+      { kind: 'heading', text: '四 · 登记' },
+      { kind: 'registration' },
     ],
     attachments: [
       { id: 'A-0175-1', name: '本次会话检索日志', kind: 'DATA', state: 'AVAILABLE', note: '日志已在你打开本卷宗时归档。归档时间戳：1988-07-02。' },

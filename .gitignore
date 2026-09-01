@@ -2,3 +2,8 @@ node_modules
 dist
 .DS_Store
 *.local
+
+# 开发期产物
+.shots/
+.tmp-*
+*.log

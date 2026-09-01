@@ -1,7 +1,9 @@
 import { useEffect } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { getPost, POSTS } from '../data/blog'
+import { SceneImageRow } from '@/shared/components/photo/SceneImage'
 import { useTrace, type TraceKey } from '@/shared/state/useTrace'
+import { renderEcho } from '@/shared/lib/echoText'
 import { BLOG } from '@/shared/routes'
 
 export function BlogPost() {
@@ -55,8 +57,21 @@ export function BlogPost() {
               {p.replace(/^\[|\]$/g, '')}
             </figure>
           ) : (
-            <p key={i}>{p}</p>
+            <p key={i}>{renderEcho(p)}</p>
           ),
+        )}
+
+        {post.images && post.images.length > 0 && <SceneImageRow images={post.images} />}
+
+        {post.outbound && (
+          <>
+            <p>{post.outbound.text}</p>
+            <p className="text-[14px]">
+              <Link to={post.outbound.href} className="text-blog-accent underline">
+                {post.outbound.label}
+              </Link>
+            </p>
+          </>
         )}
       </div>
 
@@ -106,7 +121,7 @@ export function BlogPost() {
             disabled
           />
           <p className="mt-2 text-xs text-blog-sub">
-            本站评论已于 2020 年关闭。如需联系，请留言至旧邮箱。
+            本站评论已于 2025 年 3 月关闭。如需联系，请留言至旧邮箱。
           </p>
         </div>
       </section>

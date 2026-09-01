@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import { useTrace, type SiteId } from '@/shared/state/useTrace'
 
-export type LayerTheme = 'zy' | 'bbs' | 'legacy' | 'blog' | 'archive'
+export type LayerTheme = 'zy' | 'bbs' | 'legacy' | 'blog' | 'weather' | 'archive'
 
 /**
  * 把当前站点写到 <html data-layer> 上，index.css 据此切换 body 底色与字体。

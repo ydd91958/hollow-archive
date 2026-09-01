@@ -30,7 +30,7 @@ const chrome = spawn(
   [
     '--headless=new',
     '--disable-gpu',
-    /* 这台机器上跑着 v2rayN，系统代理会把 localhost 也劫走，
+    /* 开发机上如果开着系统代理，localhost 也可能被劫走，
        导致无头浏览器拿不到页面、截出一张白图。 */
     '--no-proxy-server',
     '--proxy-bypass-list=<-loopback>',
@@ -132,7 +132,11 @@ const shot = await send('Page.captureScreenshot', {
 
 mkdirSync(dirname(out), { recursive: true })
 writeFileSync(out, Buffer.from(shot.data, 'base64'))
-console.log(`已保存 ${out}  ${Math.round(contentSize.width)}x${Math.round(contentSize.height)}`)
+const shotH = Math.min(contentSize.height, Number(maxH))
+console.log(
+  `已保存 ${out}  ${Math.round(contentSize.width)}x${Math.round(shotH)}` +
+    (shotH < contentSize.height ? `（整页 ${Math.round(contentSize.height)}，已裁剪）` : ''),
+)
 
 ws.close()
 chrome.kill()

@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { PROJECTS, PROJECT_DETAILS, SITE_META } from '../data/projects'
 import { LG } from '@/shared/routes'
+import { renderEcho } from '@/shared/lib/echoText'
 
 export function LegacyHome() {
   return (
@@ -76,7 +77,7 @@ export function LegacyHome() {
         </tbody>
       </table>
 
-      <p className="pt-2 text-[11px] leading-relaxed text-[#666]">{SITE_META.notice}</p>
+      <p className="pt-2 text-[11px] leading-relaxed text-[#666]">{renderEcho(SITE_META.notice)}</p>
     </div>
   )
 }

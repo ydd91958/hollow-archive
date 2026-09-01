@@ -5,6 +5,8 @@ import { personnel } from './personnel'
 import { investigations } from './investigations'
 import { transcripts } from './transcripts'
 import { purged } from './purged'
+import { registry } from './registry'
+import { holes } from './holes'
 
 /**
  * 全部卷宗的唯一来源。
@@ -18,6 +20,8 @@ export const ALL_ARCHIVES: Archive[] = [
   ...investigations,
   ...transcripts,
   ...purged,
+  ...registry,
+  ...holes,
 ]
 
 const BY_ID = new Map(ALL_ARCHIVES.map((a) => [a.id, a]))
@@ -28,10 +32,13 @@ export function getArchive(id: string): Archive | undefined {
 
 /**
  * 目录对外申报的条数。
- * 起始状态下与实际可见数相等；玩家拿到 CLUE_001 后 TX-88-0007 出现，
- * 实际返回变为 6——这时系统那句"申报 5 实际返回 6"才对得上。
+ *
+ * 十三份卷宗里两份有门槛：TX-88-0007 要 CLUE_001，RS-87-0175 要解锁。
+ * 所以起始可见十一份，申报数就是十一，对得上。
+ * 玩家拿到 CLUE_001 之后实际返回变成十二，申报数不动——
+ * 「申报 11 实际返回 12」这句系统提示从那一刻起开始成立。
  */
-export const DECLARED_INDEX_COUNT = 5
+export const DECLARED_INDEX_COUNT = 11
 
 export interface Access {
   clues: string[]

@@ -24,7 +24,7 @@ export const TIMELINE: TimelineEvent[] = [
   {
     date: '1987-11-03',
     label: '记录中断 · 四十一分钟',
-    detail: '二十二时十四分至二十二时五十五分。纸带无断口，笔一直抬着。',
+    detail: '十七时四十一分至十八时二十二分。纸带无断口，笔一直抬着。',
     archiveId: 'LC-62-0058',
   },
   { date: '1987-11-04', label: '登册 RS-87-0174「后声」', detail: '确认人 PN-79-0091。首次确认日期字段被遮挡。', archiveId: 'RS-87-0174' },

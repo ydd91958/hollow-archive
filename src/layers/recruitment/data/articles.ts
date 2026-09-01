@@ -18,6 +18,8 @@ export type Para =
   | { kind: 'figure'; chart: 'bar' | 'trend' | 'donut'; caption: string }
   | { kind: 'note'; text: string }
   | { kind: 'photo'; caption: string; tone: string }
+  /** 正文中段的职位位。真实门户的长文里确实会插，不必等到文末。 */
+  | { kind: 'joblist'; title: string; note?: string; ids: string[] }
 
 export interface Article {
   slug: string
@@ -93,6 +95,12 @@ export const ARTICLES: Article[] = [
         kind: 'p',
         text: '值得注意的是，这类岗位的地理分布和 AI 岗位几乎相反。AI 岗位七成集中在五个城市，而资料类岗位有六成分布在三线及以下城市——因为需要被整理的东西在那里。',
       },
+      {
+        kind: 'joblist',
+        title: '文中提到的岗位类别 · 在招',
+        note: '由系统按岗位名称自动匹配，与用人单位是否参与本专题无关。',
+        ids: ['KM-SPEC', 'TECH-WRITER', 'ENG-DOC', 'ARCHIVE-DIGI', 'PM-ARCHIVE', 'DOC-ENG'],
+      },
       { kind: 'figure', chart: 'donut', caption: '图 2 · 资料类岗位的城市层级分布' },
 
       { kind: 'h', text: '三、为什么是现在' },
@@ -106,7 +114,7 @@ export const ARTICLES: Article[] = [
       },
       {
         kind: 'p',
-        text: '第二是主体变更。行业里的改制、合并、承继在过去二十年间发生过多轮。以北岭的[[华北水文测绘技术服务有限公司|/company/HBSC]]为例，这家二〇〇六年注册的公司在二〇一三年一次性接收了原勘察队一九六二至一九九八年的项目卷册，共二十一批次。一家公司手里保管着比它自己年长二十年的资料，这在工程勘察行业并不罕见——卷册跟着业务走，不跟着营业执照走。',
+        text: '第二是主体变更。行业里的改制、合并、承继在过去二十年间发生过多轮。以北岭的[[华北水文测绘技术服务有限公司|/company/HBSC]]为例，这家二〇〇六年注册的公司在二〇一三年一次性接收了原勘察队的项目卷册，共二十一批次。接收方通常只登记卷册数量，不复核内容——受访的十一家单位里，有九家承认自己并不清楚库房里究竟存着哪些年份的东西。',
       },
       {
         kind: 'quote',

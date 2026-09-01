@@ -68,7 +68,7 @@ export const investigations: Archive[] = [
         kind: 'DATA',
         size: '96 KB',
         state: 'AVAILABLE',
-        note: '连续，无中断。二十二时十四分至二十二时五十五分之间的采样点存在，数值全部为前一采样点的复制。',
+        note: '连续，无中断。十七时四十一分至十八时二十二分之间的采样点存在，数值全部为前一采样点的复制。',
       },
       {
         id: 'A-0233-3',

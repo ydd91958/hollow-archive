@@ -66,6 +66,12 @@
     font-family: theme('fontFamily.sans');
   }
 
+  /* ── 第二层 · 北岭气象公共服务平台 ─────────────── */
+  :root[data-layer='weather'] body {
+    @apply bg-wx-bg text-wx-text;
+    font-family: theme('fontFamily.sans');
+  }
+
   /* ── 第二层 · 个人博客 ─────────────────────────── */
   :root[data-layer='blog'] body {
     @apply bg-blog-bg text-blog-ink;
@@ -407,6 +413,62 @@
 
   .lg-bar {
     @apply border border-[#8a9bb0] bg-[#c8d6e5] px-2 py-1 text-[13px] font-bold;
+  }
+
+  /* ═══════════════════════════════════════════════════
+     第二层 · 北岭气象公共服务平台
+     政务网站的视觉：方角、细边框、表格、蓝色标题条。
+     没有圆角卡片，没有投影，没有渐变按钮。
+     ═══════════════════════════════════════════════════ */
+
+  .wx-panel {
+    @apply border border-wx-line bg-white;
+  }
+
+  .wx-hd {
+    @apply flex items-center justify-between gap-3 border-b-2 border-wx-head bg-wx-panel px-3 py-2;
+  }
+
+  .wx-hd-t {
+    @apply flex items-center gap-2 text-[15px] font-semibold text-wx-head
+           before:block before:h-[14px] before:w-[4px] before:bg-wx-head before:content-[''];
+  }
+
+  .wx-more {
+    @apply text-[12px] text-wx-faint transition-colors hover:text-wx-head;
+  }
+
+  .wx-table {
+    @apply w-full border-collapse text-[13px];
+  }
+  .wx-table th {
+    @apply border border-wx-line bg-wx-panel px-2 py-1.5 text-left font-normal text-wx-sub;
+  }
+  .wx-table td {
+    @apply border border-wx-line px-2 py-1.5 text-wx-text;
+  }
+  .wx-table tbody tr:hover td {
+    @apply bg-[#f3f8fd];
+  }
+  /* 自记纸缺损行。灰掉，不加任何警示色。 */
+  .wx-table tr.wx-gap td {
+    @apply bg-[#f7f7f5] text-wx-faint;
+  }
+
+  .wx-btn {
+    @apply inline-flex items-center justify-center border border-wx-head bg-wx-head px-4 py-1.5
+           text-[13px] text-white transition-colors hover:bg-wx-headDark;
+  }
+  .wx-btn-ghost {
+    @apply inline-flex items-center justify-center border border-wx-line bg-white px-3 py-1.5
+           text-[13px] text-wx-sub transition-colors hover:border-wx-head hover:text-wx-head;
+  }
+  .wx-input {
+    @apply border border-wx-line bg-white px-2.5 py-1.5 text-[13px] text-wx-text
+           focus:border-wx-head focus:outline-none;
+  }
+  .wx-link {
+    @apply text-wx-head hover:underline;
   }
 
   /* ═══════════════════════════════════════════════════

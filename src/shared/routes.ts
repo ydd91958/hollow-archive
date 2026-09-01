@@ -27,6 +27,18 @@ export const BBS = {
   thread: (id: string) => `/forum/t/${id}`,
 } as const
 
+/* ── 第二层：北岭气象公共服务平台 ─────────────────── */
+export const WX = {
+  home: '/weather',
+  forecast: '/weather/forecast',
+  hourly: '/weather/hourly',
+  history: '/weather/history',
+  stations: '/weather/stations',
+  about: '/weather/about',
+  /** 带日期直达历史查询。博客里那条链接用它。 */
+  historyOn: (date: string) => `/weather/history?d=${date}`,
+} as const
+
 /* ── 第二层：北岭地区工程资料库 ─────────────────── */
 export const LG = {
   home: '/proj',
@@ -49,4 +61,5 @@ export const DOMAINS = {
   bbs: 'bbs.beiling.net',
   lg: 'bl-eng-data.org.cn',
   blog: 'jianzhiyuan.blogcn.net',
+  wx: 'bl-qx.gov.cn',
 } as const

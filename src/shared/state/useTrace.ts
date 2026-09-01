@@ -23,8 +23,9 @@ export type TraceKey =
   | `post:${string}`
   | `doc:${string}`
   | `reveal:${string}`
+  | `wx:${string}`
 
-export type SiteId = 'zy' | 'bbs' | 'lg' | 'blog' | 'sys'
+export type SiteId = 'zy' | 'bbs' | 'lg' | 'blog' | 'wx' | 'sys'
 
 interface TraceState {
   /** 看过的实体，按首次访问顺序。 */

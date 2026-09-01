@@ -120,6 +120,67 @@ export function Company() {
                 </li>
               ))}
             </ol>
+
+            {/*
+              代表项目。
+              这个模块本身就是真实企业主页的标配，同时它解决了一处结构性断点：
+              项目沿革原本只在第三个 tab 里，而玩家没有任何理由去点那个 tab，
+              于是整条链路卡死在这里。现在默认视图就能看到。
+            */}
+            {company.projects?.length ? (
+              <>
+                <div className="mb-4 mt-8 flex items-baseline justify-between">
+                  <h2 className="text-base font-medium text-zy-text">代表项目</h2>
+                  <button
+                    onClick={() => setTab('projects')}
+                    className="text-xs text-zy-faint transition-colors hover:text-zy-primary"
+                  >
+                    全部 {company.projects.length} 个项目 ›
+                  </button>
+                </div>
+                <ul className="grid gap-2.5 sm:grid-cols-2">
+                  {company.projects.slice(0, 4).map((p) => {
+                    const body = (
+                      <>
+                        <div className="flex items-baseline gap-2">
+                          <span className="min-w-0 flex-1 truncate text-[13.5px] font-medium text-zy-text">
+                            {p.name}
+                          </span>
+                          <span className="zy-tag shrink-0">{p.role}</span>
+                        </div>
+                        <div className="mt-1.5 flex items-baseline gap-2 text-xs">
+                          {p.hasDetail ? (
+                            <KeyTerm level={2} className="tabular-nums">
+                              {p.period}
+                            </KeyTerm>
+                          ) : (
+                            <span className="tabular-nums text-zy-faint">{p.period}</span>
+                          )}
+                          <span className="truncate text-zy-faint">项目编号 {p.id}</span>
+                        </div>
+                      </>
+                    )
+                    return (
+                      <li key={p.id}>
+                        {p.hasDetail ? (
+                          <Link
+                            to={ZY.companyProject(company.id, p.id)}
+                            className="zy-card zy-hover block px-3.5 py-3"
+                          >
+                            {body}
+                          </Link>
+                        ) : (
+                          <div className="zy-card cursor-default px-3.5 py-3">{body}</div>
+                        )}
+                      </li>
+                    )
+                  })}
+                </ul>
+                <p className="mt-3 text-xs text-zy-faint">
+                  项目信息由企业自主申报，部分早期条目由资料整编时批量导入，平台未逐条核验。
+                </p>
+              </>
+            ) : null}
           </section>
         )}
 

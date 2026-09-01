@@ -16,10 +16,15 @@ export interface Toast {
 
 interface SessionState extends Progress {
   startedAt: number
+  /** 每份卷宗被打开过几次。缄默级正文靠它决定这次显示哪个变体。 */
+  views: Record<string, number>
+  /** 玩家有没有按下那个提交按钮。这是全局唯一一个不可逆的状态。 */
+  submitted: boolean
   log: LogEntry[]
   toasts: Toast[]
 
   markRead: (archiveId: string) => void
+  submitRegistration: () => void
   recordSearch: (query: string) => void
   submitCode: (value: string) => boolean
   reveal: (token: string) => void
@@ -40,6 +45,9 @@ const EMPTY: Progress = {
 }
 
 let toastSeq = 1
+
+/** markRead 的去重记录。见 markRead 里的说明。 */
+let lastRead = { id: '', at: 0 }
 
 export const useSession = create<SessionState>()(
   persist(
@@ -100,16 +108,49 @@ export const useSession = create<SessionState>()(
       return {
         ...EMPTY,
         startedAt: Date.now(),
+        views: {},
+        submitted: false,
         log: [{ t: stamp(), text: `会话建立 · ${fullStamp()}`, tone: 'info' }],
         toasts: [],
 
         markRead(archiveId) {
-          if (get().readArchives.includes(archiveId)) return
+          /*
+           * StrictMode 在开发模式下会把 useEffect 跑两遍，views 就会一次 +2，
+           * 于是开发时看到的变体和玩家看到的对不上。这里按「同一份卷宗、
+           * 极短时间内」去重，让开发与生产的表现一致。
+           */
+          const now = Date.now()
+          if (lastRead.id === archiveId && now - lastRead.at < 400) return
+          lastRead = { id: archiveId, at: now }
+
+          const first = !get().readArchives.includes(archiveId)
+
+          /* 次数每次都加。缄默级正文靠它换形状，所以重读也要计。
+             日志只在第一次写，否则来回翻两下就把日志刷满了。 */
           set((s) => ({
-            readArchives: [...s.readArchives, archiveId],
-            log: [{ t: stamp(), text: `调阅 ${archiveId}`, tone: 'info' } as LogEntry, ...s.log].slice(0, 200),
+            readArchives: first ? [...s.readArchives, archiveId] : s.readArchives,
+            views: { ...s.views, [archiveId]: (s.views[archiveId] ?? 0) + 1 },
+            log: first
+              ? ([{ t: stamp(), text: `调阅 ${archiveId}`, tone: 'info' } as LogEntry, ...s.log].slice(
+                  0,
+                  200,
+                ) as LogEntry[])
+              : s.log,
           }))
-          evaluate()
+
+          if (first) evaluate()
+        },
+
+        submitRegistration() {
+          if (get().submitted) return
+          set((s) => ({
+            submitted: true,
+            log: [
+              { t: '17:41', text: 'RS-87-0175 · 登记提交 · 监护等级 Ⅳ', tone: 'error' } as LogEntry,
+              { t: stamp(), text: '相关人员名单已更新', tone: 'warn' } as LogEntry,
+              ...s.log,
+            ].slice(0, 200),
+          }))
         },
 
         recordSearch(query) {
@@ -171,7 +212,11 @@ export const useSession = create<SessionState>()(
           set({
             ...EMPTY,
             startedAt: Date.now(),
+            views: {},
             toasts: [],
+            /* submitted 刻意不重置。登记一旦提交，清除本地会话撤不回来——
+               这跟页面上那句「服务端记录不受影响」是一致的。 */
+            submitted: get().submitted,
             log: [{ t: stamp(), text: '本地会话已清除。服务端记录不受影响。', tone: 'error' }],
           })
         },
@@ -181,6 +226,8 @@ export const useSession = create<SessionState>()(
       name: 'hollow.session.v1',
       partialize: (s) => ({
         readArchives: s.readArchives,
+        views: s.views,
+        submitted: s.submitted,
         searches: s.searches,
         codes: s.codes,
         reveals: s.reveals,

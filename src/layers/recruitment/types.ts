@@ -66,6 +66,12 @@ export interface Job {
   perks: string[]
   /** 职位类别，用于首页分栏与筛选。 */
   category: string
+  /**
+   * 职位族。比 category 更细的一层，用于「相似职位」排序。
+   * 资料/文档/知识管理这一族横跨技术、工程、职能三个 category，
+   * 只靠 category 匹配会把资料岗推给 HRBP，那是断链。
+   */
+  family?: string
   publishedText: string
   /** 已投递人数，列表页显示，纯粹是密度。 */
   applicants?: number

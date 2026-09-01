@@ -7,6 +7,7 @@ import { CompanyMark } from '../components/brand/CompanyMark'
 import { useTrace } from '@/shared/state/useTrace'
 import { useActiveSignals } from '@/shared/lib/useSignals'
 import { KeyTerm } from '../components/Emphasis'
+import { renderInline } from '../lib/inlineMark'
 import { ZY } from '@/shared/routes'
 import { cn } from '@/shared/lib/cn'
 
@@ -34,9 +35,27 @@ export function JobDetail() {
     )
   }
 
+  /*
+   * 相似职位排序：同职位族 > 同公司 > 同类目。
+   * 只按 category 匹配会把「项目资料管理员」推给 HRBP、法务专员——
+   * 那会把玩家从资料岗这一簇里弹出去，是一处断链。
+   */
   const similar = visibleJobs(signals)
-    .filter((j) => j.id !== job.id && (j.category === job.category || j.companyId === job.companyId))
+    .filter(
+      (j) =>
+        j.id !== job.id &&
+        (j.family === job.family || j.companyId === job.companyId || j.category === job.category),
+    )
+    .map((j) => ({
+      job: j,
+      score:
+        (job.family && j.family === job.family ? 4 : 0) +
+        (j.companyId === job.companyId ? 3 : 0) +
+        (j.category === job.category ? 1 : 0),
+    }))
+    .sort((a, b) => b.score - a.score)
     .slice(0, 4)
+    .map((x) => x.job)
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-6">
@@ -124,7 +143,7 @@ export function JobDetail() {
 
             {job.addendum && (
               <p className="mt-6 border-t border-zy-line pt-4 text-sm leading-relaxed text-zy-sub">
-                {job.addendum}
+                {renderInline(job.addendum)}
               </p>
             )}
           </section>

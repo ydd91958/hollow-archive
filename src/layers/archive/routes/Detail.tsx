@@ -80,7 +80,7 @@ export function Detail() {
 
       {/* ── 正文 ─────────────────────────────────────── */}
       <Panel title="正文" meta={`调阅终端 ${terminalId()}`} bodyClassName="px-4 py-5 md:px-6">
-        <ArchiveBody blocks={a.body} inkToken={INK_TOKENS[a.id]} />
+        <ArchiveBody archiveId={a.id} blocks={a.body} inkToken={INK_TOKENS[a.id]} />
       </Panel>
 
       {/* ── 附件 ─────────────────────────────────────── */}

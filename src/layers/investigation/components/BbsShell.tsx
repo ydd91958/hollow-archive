@@ -52,6 +52,25 @@ export function BbsShell() {
       </main>
 
       <footer className="mt-8 border-t border-bbs-line bg-white">
+        {/* 友情链接。地方论坛都有这么一栏，之前漏了，
+            导致论坛是全站唯一一个不指向任何外部站点的孤岛。 */}
+        <div className="mx-auto max-w-5xl border-b border-bbs-line px-4 py-3">
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-zy-faint">
+            <span>友情链接：</span>
+            <Link to="/weather" className="bbs-link">
+              北岭市气象局
+            </Link>
+            <Link to="/proj" className="bbs-link">
+              北岭地区工程资料库
+            </Link>
+            <Link to="/blog" className="bbs-link">
+              窗台上的胶卷
+            </Link>
+            <span>北岭市人民政府</span>
+            <span>北岭日报</span>
+            <span>本地二手车</span>
+          </div>
+        </div>
         <div className="mx-auto max-w-5xl space-y-1 px-4 py-6 text-xs leading-relaxed text-zy-faint">
           <div>北岭生活论坛 · 本站言论仅代表发帖者个人观点，与本站立场无关</div>
           <div>违法和不良信息举报电话：0311-8****217 · 举报邮箱：jubao@beiling.net</div>

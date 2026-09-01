@@ -4,6 +4,8 @@ import { getThread, BOARD_BY_ID, type Reply } from '../data/forum'
 import { useTrace } from '@/shared/state/useTrace'
 import { useSignal } from '@/shared/lib/useSignals'
 import { BBS } from '@/shared/routes'
+import { SceneImageRow, type SceneImage } from '@/shared/components/photo/SceneImage'
+import { renderEcho } from '@/shared/lib/echoText'
 import { cn } from '@/shared/lib/cn'
 
 export function ForumThread() {
@@ -59,10 +61,12 @@ export function ForumThread() {
           posts={thread.posts}
           time={thread.time}
           floor={1}
+          homepage={thread.homepage}
+          images={thread.images}
         >
           {thread.body.map((p, i) => (
             <p key={i} className="mb-3 last:mb-0">
-              {p}
+              {renderEcho(p)}
             </p>
           ))}
         </PostBlock>
@@ -131,6 +135,8 @@ function PostBlock({
   posts,
   time,
   floor,
+  homepage,
+  images,
   children,
   muted,
 }: {
@@ -139,6 +145,8 @@ function PostBlock({
   posts: number
   time: string
   floor: number
+  homepage?: { label: string; href: string }
+  images?: SceneImage[]
   children: ReactNode
   muted?: boolean
 }) {
@@ -153,6 +161,16 @@ function PostBlock({
           <div>注册 {registered}</div>
           <div>帖子 {posts}</div>
         </div>
+        {/* 个人主页。真实论坛的用户资料栏里本来就有这一格。 */}
+        {homepage && (
+          <Link
+            to={homepage.href}
+            className="mt-1.5 block truncate text-[10px] text-bbs-link hover:underline"
+            title={homepage.label}
+          >
+            个人主页
+          </Link>
+        )}
       </div>
 
       <div className="min-w-0 flex-1 px-4 py-3">
@@ -163,6 +181,7 @@ function PostBlock({
         <div className={cn('text-[13.5px] leading-[1.9]', muted ? 'text-zy-faint' : 'text-zy-text')}>
           {children}
         </div>
+        {images && images.length > 0 && <SceneImageRow images={images} />}
       </div>
     </div>
   )
@@ -177,6 +196,8 @@ function ReplyBlock({ reply, showSnapshot }: { reply: Reply; showSnapshot: boole
       author={reply.author}
       registered={reply.registered}
       posts={reply.posts}
+      homepage={reply.homepage}
+      images={reply.images}
       time={reply.time}
       floor={reply.floor}
       muted={Boolean(del) && !revealed}
@@ -195,14 +216,14 @@ function ReplyBlock({ reply, showSnapshot }: { reply: Reply; showSnapshot: boole
           <div className="mb-1.5 text-[11px] text-zy-faint">
             历史版本 · 该内容已于 {del.time} 被删除
           </div>
-          <p className="text-[13.5px] leading-[1.9] text-zy-text">{del.original}</p>
+          <p className="text-[13.5px] leading-[1.9] text-zy-text">{renderEcho(del.original)}</p>
           {del.signature && (
             <div className="mt-2 text-[11px] text-zy-faint">{del.signature}</div>
           )}
         </div>
       )}
 
-      {!del && <p>{reply.text}</p>}
+      {!del && <p>{renderEcho(reply.text)}</p>}
     </PostBlock>
   )
 }

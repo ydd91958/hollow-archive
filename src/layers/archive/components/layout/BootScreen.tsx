@@ -6,7 +6,7 @@ const LINES: { text: string; delay: number; tone?: 'ok' | 'warn' | 'err' }[] = [
   { text: `${BUREAU.systemNameEn} ${BUREAU.version} · BUILD ${BUREAU.build}`, delay: 60 },
   { text: `${BUREAU.publicName} · ${BUREAU.department}`, delay: 120 },
   { text: '挂载卷宗库 …… 完成', delay: 260, tone: 'ok' },
-  { text: '校验目录 …… 申报 5 · 返回 6', delay: 420, tone: 'warn' },
+  { text: '校验目录 …… 申报 11 · 返回 12', delay: 420, tone: 'warn' },
   { text: '差值 +1 · 按惯例忽略', delay: 520, tone: 'warn' },
   { text: `登记终端 ${terminalId()} …… 未申请权限`, delay: 700 },
   { text: '权限校验 …… 通过', delay: 880, tone: 'ok' },

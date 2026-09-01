@@ -6,9 +6,10 @@ import type { Job, Recruiter } from '../types'
  * 其中 46 条与主线毫无关系——Java、销售、HR、会计、老师、物流、护理设备……
  * 它们存在的唯一目的，是让玩家点开任何一条都发现不了任何东西。
  *
- * 与主线沾边的只有华北水测（北岭）的 5 条，其中真正的入口只有
- * PM-ARCHIVE 一条，且它不出现在首页任何模块里——首页按真实门户的做法
- * 只推一线城市职位，北岭的岗位要到 /jobs 列表或搜索里才会出现。
+ * 与主线沾边的只有华北水测（北岭）的 5 条。首页不再按城市排除北岭——
+ * 让华北水测的水文岗、测绘岗像普通公司一样正常曝光，玩家在遇到
+ * 「项目资料管理员」之前就见过这家公司，才不会觉得它是凭空冒出来的。
+ * 核心岗自身靠 freshnessDays()（已连续发布 419 天 = 最旧）沉底。
  */
 
 const R: Record<string, Recruiter> = {
@@ -910,6 +911,7 @@ export const JOBS: Job[] = [
      也正因如此，华北水测那一条才不会显得特别。 */
   {
     id: 'KM-SPEC',
+    family: 'archive',
     title: '知识管理专员',
     companyId: 'XINGYE',
     salary: '12-18K',
@@ -935,6 +937,7 @@ export const JOBS: Job[] = [
   },
   {
     id: 'TECH-WRITER',
+    family: 'archive',
     title: '技术文档工程师',
     companyId: 'SHENLAN',
     salary: '15-24K',
@@ -957,6 +960,7 @@ export const JOBS: Job[] = [
   },
   {
     id: 'DOC-ENG',
+    family: 'archive',
     title: '技术资料工程师',
     companyId: 'HANTU',
     salary: '13-20K',
@@ -983,6 +987,7 @@ export const JOBS: Job[] = [
   },
   {
     id: 'ARCHIVE-DIGI',
+    family: 'archive',
     title: '档案数字化专员',
     companyId: 'ZHONGCE',
     salary: '6-9K',
@@ -1009,6 +1014,7 @@ export const JOBS: Job[] = [
   },
   {
     id: 'ENG-DOC',
+    family: 'archive',
     title: '工程资料员',
     companyId: 'HAORAN',
     salary: '6-10K',
@@ -1082,6 +1088,7 @@ export const JOBS: Job[] = [
   {
     /* 核心职位。不协调控制在三处，全部写成行政表述。 */
     id: 'PM-ARCHIVE',
+    family: 'archive',
     title: '项目资料管理员',
     companyId: 'HBSC',
     salary: '6-9K',
@@ -1110,7 +1117,7 @@ export const JOBS: Job[] = [
     ],
     highlight: ['能够适应不完整的历史资料。', '有听打或录音转写经验者优先。'],
     addendum:
-      '备注：本岗位工作地点为公司资料室（B 座负一层）。部分项目卷册的原始载体为纸质或磁性介质，需配合技术部门完成转录与登记。转录内容以卷册原样为准，不作判断、不作补充。',
+      '备注：本岗位工作地点为公司资料室（B 座负一层）。部分项目卷册的原始载体为纸质或磁性介质，需配合技术部门完成转录与登记。**转录内容以卷册原样为准，不作判断、不作补充。**',
     recruiter: R.HBSC,
   },
   {
@@ -1167,11 +1174,16 @@ export function visibleJobs(activeSignals: string[]): Job[] {
 }
 
 /**
- * 首页只推一线与新一线城市的职位。
- * 这既符合真实门户的运营逻辑（首页流量给大城市），
- * 也让北岭的岗位只有在检索或浏览列表时才会出现。
+ * 首页覆盖的城市。
+ *
+ * 一个有 22 家企业的平台，首页系统性排除某个城市本身就不自然，
+ * 所以北岭也在内。真正让核心岗位保持隐蔽的不是城市过滤，而是
+ * 下面的 freshnessDays()——首页按发布新鲜度排序，
+ * 华北水测的水文/测绘岗（3 天前）会正常浮上来，
+ * 而「已连续发布 419 天」的那条会沉到最底下。
  */
 export const HOMEPAGE_CITIES = [
+  '北岭',
   '北京',
   '上海',
   '广州',
@@ -1191,6 +1203,19 @@ export const HOMEPAGE_CITIES = [
 
 export function homepageJobs(activeSignals: string[]): Job[] {
   return visibleJobs(activeSignals).filter((j) => HOMEPAGE_CITIES.includes(j.city))
+}
+
+/**
+ * 把 publishedText 折算成「发布至今多少天」，用于首页排序。
+ * 解析不出来的（如「发布时间未提供」）排到最后。
+ */
+export function freshnessDays(job: Job): number {
+  const t = job.publishedText
+  const n = Number(/(\d+)/.exec(t)?.[1] ?? NaN)
+  if (Number.isNaN(n)) return 9999
+  if (t.includes('周')) return n * 7
+  if (t.includes('月')) return n * 30
+  return n
 }
 
 /** 从「25-40K」「200-300/天」「面议」里取出用于排序的月薪下限（单位 K）。 */

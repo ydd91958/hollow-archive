@@ -6,6 +6,8 @@
  * 玩家要先在别处见过那个日期，论坛才会把「历史版本」按钮露出来。
  */
 
+import type { SceneImage } from '@/shared/components/photo/SceneImage'
+
 export interface Board {
   id: string
   name: string
@@ -21,6 +23,10 @@ export interface Reply {
   posts: number
   time: string
   text: string
+  /** 用户资料栏里的个人主页。真实论坛都有这个字段。 */
+  homepage?: { label: string; href: string }
+  /** 帖子里贴的图。 */
+  images?: SceneImage[]
   /** 被管理员删除的回复。 */
   deleted?: {
     reason: string
@@ -43,6 +49,8 @@ export interface Thread {
   views: number
   pinned?: boolean
   body: string[]
+  homepage?: { label: string; href: string }
+  images?: SceneImage[]
   replies: Reply[]
 }
 
@@ -51,9 +59,301 @@ export const BOARDS: Board[] = [
   { id: 'flea', name: '二手闲置', desc: '闲置转让，同城自提', threadCount: 8032, postCount: 24118 },
   { id: 'job', name: '求职招聘', desc: '本地招聘与求职信息', threadCount: 3391, postCount: 15602 },
   { id: 'photo', name: '老照片', desc: '北岭的过去', threadCount: 742, postCount: 6183 },
+  { id: 'recall', name: '旧事重提', desc: '记不清的事，来这儿对对', threadCount: 1156, postCount: 18904 },
 ]
 
 export const THREADS: Thread[] = [
+  /* ══════════ 旧事重提 · 贯穿物：火车站的钟 ══════════
+     玩家在这里第一次遇到「一群人记得 A，记录写着 B」。
+     没有术语，没有诡异感，就是本地人吵架。
+     等他后来在空册的静置名录里看到同一条，才知道这叫什么。 */
+  {
+    id: 'STATION-CLOCK',
+    boardId: 'recall',
+    title: '北岭站那个钟到底是罗马数字还是阿拉伯数字',
+    author: '半坡新村',
+    registered: '2016-04',
+    posts: 812,
+    time: '2024-03-11 21:07',
+    views: 4231,
+    body: [
+      '昨天跟我媳妇为这个争了一晚上。我记得小时候去接我姥，站前那个钟面上是罗马数字，就那种一竖两竖的。她说我记岔了，说从来都是阿拉伯的。',
+      '我上网找了张现在的照片，确实是阿拉伯的。但是我真的记得是罗马的。',
+      '有没有八零后能作证的。',
+    ],
+    images: [
+      {
+        kind: 'station',
+        numerals: 'arabic',
+        src: 'station-now-arabic.jpg',
+        treatment: 'scan',
+        caption: '现在的北岭站（网上找的）',
+        width: 340,
+      },
+    ],
+    replies: [
+      {
+        floor: 2,
+        author: '开水房老李',
+        registered: '2011-09',
+        posts: 6241,
+        time: '2024-03-11 21:44',
+        text: '阿拉伯的。我在站上干了二十三年，天天从底下过。',
+      },
+      {
+        floor: 3,
+        author: '柏树街',
+        registered: '2013-02',
+        posts: 1877,
+        time: '2024-03-11 22:19',
+        text: '我也记得是罗马的？我小学春游在那儿排过队。不过我这人记性一直不行，可能是别的地方。',
+      },
+      {
+        floor: 4,
+        author: '开水房老李',
+        registered: '2011-09',
+        posts: 6241,
+        time: '2024-03-11 22:31',
+        text: '你们是不是想起石城站了。石城那个是罗马的。',
+      },
+      {
+        floor: 5,
+        author: '半坡新村',
+        registered: '2016-04',
+        posts: 812,
+        time: '2024-03-11 22:50',
+        text: '不可能，我姥家就在这儿，我没去过石城。',
+      },
+      {
+        floor: 6,
+        author: '窗台',
+        registered: '2011-11',
+        posts: 403,
+        time: '2024-03-12 08:16',
+        text: '九四年翻修的时候换过一次。换之前是罗马的，我拍过。回头我扫了传上来。',
+        homepage: { label: '窗台上的胶卷', href: '/blog' },
+      },
+      {
+        floor: 7,
+        author: '开水房老李',
+        registered: '2011-09',
+        posts: 6241,
+        time: '2024-03-12 09:02',
+        text: '九四年那次我在的，只换了灯箱和候车室座椅，钟没动。',
+      },
+      {
+        floor: 8,
+        author: '半坡新村',
+        registered: '2016-04',
+        posts: 812,
+        time: '2024-03-13 19:38',
+        text: '把我爸相册全翻了一遍，找到一张八六年的，能看见钟。传上来了，你们自己看。',
+        images: [
+          {
+            kind: 'broken',
+            filename: 'IMG_19860000_beilingzhan.jpg',
+            note: '该附件已失效（上传于 2024-03-13）',
+          },
+        ],
+      },
+      {
+        floor: 9,
+        author: '柏树街',
+        registered: '2013-02',
+        posts: 1877,
+        time: '2024-03-13 20:11',
+        text: '图挂了。',
+      },
+      {
+        floor: 10,
+        author: '半坡新村',
+        registered: '2016-04',
+        posts: 812,
+        time: '2024-03-14 07:55',
+        text: '我这边也看不了了。刚才明明还能看。算了，不争了。',
+      },
+    ],
+  },
+
+  {
+    id: 'LIONS',
+    boardId: 'recall',
+    title: '老百货门口的石狮子是一只还是一对',
+    author: '菜市口张',
+    registered: '2014-07',
+    posts: 2290,
+    time: '2023-11-28 16:22',
+    views: 2617,
+    body: [
+      '拆之前门口那个石狮子，我一直记得就一只，在左边。今天跟我姐说起来，她一口咬定是一对。',
+      '谁还有印象。',
+    ],
+    replies: [
+      {
+        floor: 2,
+        author: '开水房老李',
+        registered: '2011-09',
+        posts: 6241,
+        time: '2023-11-28 17:03',
+        text: '一对。右边那只九几年被车撞了拉走修，修完没拉回来。所以你们俩说的都对，看你们记的是哪年。',
+      },
+      {
+        floor: 3,
+        author: '菜市口张',
+        registered: '2014-07',
+        posts: 2290,
+        time: '2023-11-28 17:40',
+        text: '哦，那就说得通了。谢了老李。',
+      },
+      {
+        floor: 4,
+        author: '半坡新村',
+        registered: '2016-04',
+        posts: 812,
+        time: '2023-11-29 09:14',
+        text: '这个版真好，什么陈芝麻烂谷子都有人记得。',
+      },
+    ],
+  },
+
+  {
+    id: 'NOODLE-GONE',
+    boardId: 'recall',
+    title: '找一家面馆，在兴平路上，招牌是绿的',
+    author: '不吃香菜',
+    registered: '2019-05',
+    posts: 340,
+    time: '2024-06-02 12:41',
+    views: 1893,
+    body: [
+      '大概零几年的时候，兴平路靠近水文大厦那一段有家面馆，招牌绿底白字，卖刀削面。我上班那几年天天吃。',
+      '前几天想带我对象去，找不着了。工商也查不到这个名字。那个门牌号查出来一直是个五金店，从九八年到现在都是。',
+      '我不可能记错，我在那儿吃了三年。',
+    ],
+    replies: [
+      {
+        floor: 2,
+        author: '柏树街',
+        registered: '2013-02',
+        posts: 1877,
+        time: '2024-06-02 13:20',
+        text: '你是不是记成隔壁县的了。那边也有一条兴平路。',
+      },
+      {
+        floor: 3,
+        author: '不吃香菜',
+        registered: '2019-05',
+        posts: 340,
+        time: '2024-06-02 13:35',
+        text: '不是。我们单位就在水文大厦，中午走过去五分钟。',
+      },
+      {
+        floor: 4,
+        author: '开水房老李',
+        registered: '2011-09',
+        posts: 6241,
+        time: '2024-06-02 15:08',
+        text: '绿招牌刀削面有点印象。是不是没挂执照那种，做了几年就撤了。',
+      },
+      {
+        floor: 5,
+        author: '不吃香菜',
+        registered: '2019-05',
+        posts: 340,
+        time: '2024-06-02 16:44',
+        text: '有执照的，墙上挂着，我天天看着。',
+      },
+    ],
+  },
+
+  {
+    id: 'FIVE-PEOPLE',
+    boardId: 'recall',
+    title: '我家那张合影本来是五个人',
+    author: '南关口',
+    registered: '2017-10',
+    posts: 528,
+    time: '2025-01-19 22:30',
+    views: 3054,
+    body: [
+      '我妈过世以后整理东西，翻出一张老照片，我们家院里拍的。我记得清清楚楚是五个人，我爸我妈我姐我，还有一个我表叔。',
+      '现在照片上只有四个。位置也不对，我姐站在最边上，可我记得她在中间。',
+      '我不是说照片被人动过。就是很奇怪。',
+    ],
+    replies: [
+      {
+        floor: 2,
+        author: '菜市口张',
+        registered: '2014-07',
+        posts: 2290,
+        time: '2025-01-19 23:12',
+        text: '可能是两张照片记混了。同一天一般拍好几张。',
+      },
+      {
+        floor: 3,
+        author: '南关口',
+        registered: '2017-10',
+        posts: 528,
+        time: '2025-01-20 07:19',
+        text: '就这一张。背面有我妈写的日期。',
+      },
+      {
+        floor: 4,
+        author: '柏树街',
+        registered: '2013-02',
+        posts: 1877,
+        time: '2025-01-20 09:41',
+        text: '节哀。这种时候人容易钻牛角尖，别多想。',
+      },
+      {
+        floor: 5,
+        author: '南关口',
+        registered: '2017-10',
+        posts: 528,
+        time: '2025-01-20 10:03',
+        text: '谢谢。可能是吧。',
+      },
+    ],
+  },
+
+  {
+    id: 'SCHOOL-NAME',
+    boardId: 'recall',
+    title: '兴平路小学以前是不是叫第一小学',
+    author: '柏树街',
+    registered: '2013-02',
+    posts: 1877,
+    time: '2022-09-08 20:15',
+    views: 1420,
+    body: ['同学群里为这个吵起来了。有人说一直就叫兴平路小学，有人说以前门口挂的是兴平路第一小学。'],
+    replies: [
+      {
+        floor: 2,
+        author: '开水房老李',
+        registered: '2011-09',
+        posts: 6241,
+        time: '2022-09-08 21:02',
+        text: '北岭就没有过第二小学，哪来的第一。',
+      },
+      {
+        floor: 3,
+        author: '菜市口张',
+        registered: '2014-07',
+        posts: 2290,
+        time: '2022-09-09 08:33',
+        text: '楼上这个理由挺有说服力的。',
+      },
+      {
+        floor: 4,
+        author: '半坡新村',
+        registered: '2016-04',
+        posts: 812,
+        time: '2022-09-09 11:20',
+        text: '但是我也记得有第一两个字。',
+      },
+    ],
+  },
+
   {
     id: 'RULES',
     boardId: 'chat',
@@ -127,7 +427,7 @@ export const THREADS: Thread[] = [
         registered: '——',
         posts: 0,
         time: '2023-09-15 12:19',
-        text: '我爸八几年在那边干过。他说有一天晚上全站的仪器都停了，四十来分钟，后来又自己好了，谁都说不清怎么回事。第二天上面来人把记录本收走了，让他们别往外说。他退休以后才跟我讲的。',
+        text: '我爸八几年在那边干过。他说有一天晚上全站的仪器都停了，{{echo:四十来分钟|四十分钟}}，后来又自己好了，谁都说不清怎么回事。第二天上面来人把记录本收走了，让他们别往外说。他退休以后才跟我讲的。',
       },
       {
         floor: 7,
@@ -224,7 +524,7 @@ export const THREADS: Thread[] = [
         registered: '2009-11-08',
         posts: 5417,
         time: '2022-06-08 16:30',
-        text: '那会儿在云岭干活的应该是市里的水文地质队，后来单位改制没了。你可以去问问现在那个华北水测，听说老档案都在他们那儿。',
+        text: '那会儿在云岭干活的应该是市里的水文地质队，后来单位改制没了。行业协会有个工程资料库，老项目的著录都在上面，能查到人员名单。你可以去问问现在那个华北水测，听说老档案都在他们那儿。',
       },
       {
         floor: 3,

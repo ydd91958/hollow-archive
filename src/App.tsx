@@ -23,6 +23,15 @@ import { LegacyHome } from '@/layers/investigation/routes/LegacyHome'
 import { LegacyProject } from '@/layers/investigation/routes/LegacyProject'
 import { LegacyAttach } from '@/layers/investigation/routes/LegacyAttach'
 import { BlogShell } from '@/layers/investigation/components/BlogShell'
+import { WxShell } from '@/layers/investigation/components/WxShell'
+import { WxHome } from '@/layers/investigation/routes/WxHome'
+import { WxHistory } from '@/layers/investigation/routes/WxHistory'
+import {
+  WxForecast,
+  WxHourly,
+  WxStations,
+  WxAbout,
+} from '@/layers/investigation/routes/WxPages'
 import { BlogHome } from '@/layers/investigation/routes/BlogHome'
 import { BlogPost } from '@/layers/investigation/routes/BlogPost'
 
@@ -46,8 +55,9 @@ import { SYS_ROOT } from '@/layers/archive/paths'
  * 第三层要一路调查到旧资料库的那条失效附件链接才能到达。
  */
 export default function App() {
+  /* basename 跟着 Vite 的 base 走：本地是 /，GitHub Pages 上是 /hollow-archive/。 */
   return (
-    <BrowserRouter>
+    <BrowserRouter basename={import.meta.env.BASE_URL}>
       <Routes>
         {/* 第一层 · 职引 zhiyin.com */}
         <Route element={<ZyShell />}>
@@ -77,6 +87,16 @@ export default function App() {
           <Route index element={<LegacyHome />} />
           <Route path=":id" element={<LegacyProject />} />
           <Route path=":id/attach/:attachId" element={<LegacyAttach />} />
+        </Route>
+
+        {/* 第二层 · 北岭气象公共服务平台 bl-qx.gov.cn */}
+        <Route path="/weather" element={<WxShell />}>
+          <Route index element={<WxHome />} />
+          <Route path="forecast" element={<WxForecast />} />
+          <Route path="hourly" element={<WxHourly />} />
+          <Route path="history" element={<WxHistory />} />
+          <Route path="stations" element={<WxStations />} />
+          <Route path="about" element={<WxAbout />} />
         </Route>
 
         {/* 第二层 · 个人博客 jianzhiyuan.blogcn.net */}

@@ -1,6 +1,8 @@
 import type { ReactNode } from 'react'
 import type { Para } from '../data/articles'
 import { renderInline } from '../lib/inlineMark'
+import { getJob } from '../data/jobs'
+import { JobTile } from './home/JobTile'
 import { cn } from '@/shared/lib/cn'
 
 /**
@@ -90,6 +92,25 @@ export function ArticleBody({
                 <figcaption className="mt-2 text-[12px] text-zy-faint">{p.caption}</figcaption>
               </figure>
             )
+
+          case 'joblist': {
+            const jobs = p.ids.map(getJob).filter((j): j is NonNullable<typeof j> => Boolean(j))
+            if (jobs.length === 0) return null
+            return (
+              <section key={i} className="rounded-lg bg-[#f5f8fc] p-4">
+                <div className="mb-3 flex items-baseline justify-between gap-3">
+                  <h4 className="text-[14px] font-medium text-zy-text">{p.title}</h4>
+                  <span className="text-[11.5px] text-zy-faint">{jobs.length} 个在招</span>
+                </div>
+                <div className="grid gap-2.5 sm:grid-cols-2 lg:grid-cols-3">
+                  {jobs.map((j) => (
+                    <JobTile key={j.id} job={j} />
+                  ))}
+                </div>
+                {p.note && <p className="mt-3 text-[11.5px] text-zy-faint">{p.note}</p>}
+              </section>
+            )
+          }
 
           case 'note':
             return (

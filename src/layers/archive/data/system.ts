@@ -54,7 +54,7 @@ export const NOTICES: Notice[] = [
     id: 'N-02',
     date: '1988-07-02',
     tone: 'warn',
-    text: '目录校验异常：索引申报 5 条，实际返回 6 条。差值连续三次出现在同一位置。已按惯例忽略。',
+    text: '目录校验异常：索引申报 11 条，实际返回 12 条。差值连续三次出现在同一位置。已按惯例忽略。',
   },
   {
     id: 'N-03',
@@ -105,7 +105,7 @@ export const RECENT: Recent[] = [
 
 /** 状态栏里滚动的系统日志（纯装饰，但要像真的）。 */
 export const AMBIENT_LOG = [
-  'idx.rebuild ok — 7 rec',
+  'idx.rebuild ok — 13 rec',
   'custody.sweep — 0 change',
   'medium.check T-17 — read err 0x41',
   'auth.session refresh',
